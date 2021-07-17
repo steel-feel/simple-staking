@@ -21,36 +21,34 @@ describe('Staking', function () {
         await token.transfer(stake.address, 100);
 
         //fund user1 account
-       await token.transfer(await user1.getAddress(), 100); 
-        
+        await token.transfer(await user1.getAddress(), 100);
+
     });
 
     it("Should stake successfully", async function () {
-        //connect and approving account
-      const oStake = stake.connect(user1),
-          oToken = token.connect(user1),
-          amount = 10;
-            
-     await oToken.approve(stake.address, amount);
-        
-       await oStake.stake(amount);
-       const result = await oStake.checkStaking();
+        //connect approving account
+        const oStake = stake.connect(user1),
+            oToken = token.connect(user1),
+            amount = 10;
 
-      console.log();
+        await oToken.approve(stake.address, amount);
 
-     expect(result[0].toNumber()).to.equal(amount);
+        await oStake.stake(amount);
+        const result = await oStake.checkStaking();
+
+        expect(result[0].toNumber()).to.equal(amount);
 
     });
 
-    it("Should not withdraw before 60 days", async ()=> {
+    it("Should not withdraw before 60 days", async () => {
         const oStake = stake.connect(user1);
 
-        try{
-        await oStake.withdrawStaking() 
-        }catch(err){
+        try {
+            await oStake.withdrawStaking()
+        } catch (err) {
             throw new Error(err);
         }
-       
+
         expect(true).to.equal(true);
 
     })
