@@ -36,10 +36,12 @@ contract Staking {
         require(block.timestamp > endTime[msg.sender], "Could not withdraw before maturity");
         require(token.balanceOf(address(this)) > userStakings[msg.sender] +  reward, "Ran out of rewards, please contact admin"  );
         
+        uint totalAmout = userStakings[msg.sender] + reward;
+
         userStakings[msg.sender] = 0;
         endTime[msg.sender] = 0;
         
-        token.transfer(msg.sender, userStakings[msg.sender] + reward );
+        token.transfer(msg.sender, totalAmout );
         
         return true;
     }    
