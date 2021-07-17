@@ -39,7 +39,7 @@ contract Staking {
         userStakings[msg.sender] = 0;
         endTime[msg.sender] = 0;
         
-        token.transfer(msg.sender, userStakings[msg.sender]  );
+        token.transfer(msg.sender, userStakings[msg.sender] + reward );
         
         return true;
     }    
