@@ -14,12 +14,12 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const SimpleStaking = await hre.ethers.getContractFactory("SimpleStaking");
+  const SimpleStaking = await hre.ethers.getContractFactory("Staking");
   const oStimpleStaking = await SimpleStaking.deploy();
 
-  await SimpleStaking.deployed();
+  await oStimpleStaking.deployed();
 
-  console.log("Staking contract deployed to:", SimpleStaking.address);
+  console.log("Staking contract deployed to:", oStimpleStaking.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
