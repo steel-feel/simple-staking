@@ -4,6 +4,7 @@
   "description": "Project📒 to demonstrate staking💰 of ERC20 based tokens over a period of time.",
   "main": "index.js",
   "scripts": {
+    "ci-deploy" : "hardhat run scripts/ci-deploy.js --network local",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

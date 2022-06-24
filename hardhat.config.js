@@ -19,7 +19,10 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 module.exports = {
   defaultNetwork: "hardhat",
   networks: {
-    hardhat: {}
+    hardhat: {},
+    local: {
+      url: "http://localhost:8545"
+    }
   },
   solidity: "0.8.4",
 };
