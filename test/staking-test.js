@@ -9,19 +9,22 @@ describe('Staking', function () {
 
         [admin, user1] = accounts;
 
-        const TokenContract = await ethers.getContractFactory("GLDToken");
-        token = await TokenContract.deploy(10000);
-        await token.deployed();
-
-        const SimpleStaking = await ethers.getContractFactory("Staking");
-        stake = await SimpleStaking.deploy(token.address);
-        await stake.deployed();
-
-        //fund contract token account with extra token for rewards
-        await token.transfer(stake.address, 100);
+        const GLDTokenFactory = await hre.ethers.getContractFactory("GLDToken");
+        const gold = await GLDTokenFactory.deploy(100000);
+      
+        await gold.deployed();
+        console.log(`ERC 20 contract deployed at ${gold.address}`);
+      
+        // We get the contract to deploy
+        const StakingFactory = await hre.ethers.getContractFactory("Staking");
+        const staking = await StakingFactory.deploy(gold.address,5);
+      
+        await staking.deployed();
+      
+        console.log(`Staking contract deployed at ${staking.address}`);
 
         //fund user1 account
-        await token.transfer(await user1.getAddress(), 100);
+        await gold.transfer(await user1.getAddress(), 100);
 
     });
 
