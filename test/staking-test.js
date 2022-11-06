@@ -1,5 +1,7 @@
-let stake, token, admin, user1;
 const { expect } = require("chai");
+const helpers = require("@nomicfoundation/hardhat-network-helpers");
+
+let staking, gold;
 
 describe('Staking', function () {
 
@@ -9,50 +11,65 @@ describe('Staking', function () {
 
         [admin, user1] = accounts;
 
+        // ERC20 token contract for reward and staking 
         const GLDTokenFactory = await hre.ethers.getContractFactory("GLDToken");
-        const gold = await GLDTokenFactory.deploy(100000);
-      
+        gold = await GLDTokenFactory.deploy(100);
         await gold.deployed();
-        console.log(`ERC 20 contract deployed at ${gold.address}`);
       
-        // We get the contract to deploy
+        // Staking contract
         const StakingFactory = await hre.ethers.getContractFactory("Staking");
-        const staking = await StakingFactory.deploy(gold.address,5);
-      
+        staking = await StakingFactory.deploy(gold.address,1);    
         await staking.deployed();
       
-        console.log(`Staking contract deployed at ${staking.address}`);
-
         //fund user1 account
         await gold.transfer(await user1.getAddress(), 100);
 
     });
 
+    it("Create pool" , async () => {
+        await expect(staking.createPool(gold.address)) 
+        .to.emit(staking, 'PoolCreated')
+        .withArgs(0);
+    })
+
     it("Should stake successfully", async function () {
         //connect approving account
-        const oStake = stake.connect(user1),
-            oToken = token.connect(user1),
-            amount = 10;
+        const oStake = staking.connect(user1),
+            oToken = gold.connect(user1),
+            amount = 10,
+            poolId = 0;
 
-        await oToken.approve(stake.address, amount);
+        await oToken.approve(staking.address, amount);
 
-        await oStake.stake(amount);
-        const result = await oStake.checkStaking();
-
-        expect(result[0].toNumber()).to.equal(amount);
+        await expect(oStake.deposit(poolId, amount))
+        .to.emit(staking, 'Deposit')
+        .withArgs(user1.address,poolId,amount);
 
     });
 
-    it("Should not withdraw before 60 days", async () => {
-        const oStake = stake.connect(user1);
+    it("Harvest tokens", async () => {
+        const poolId = 0;
+        const oStake = staking.connect(user1);
 
-        try {
-            await oStake.withdrawStaking()
-        } catch (err) {
-            throw new Error(err);
-        }
+        //mine 10 blocks to generate staking rewards
+        await helpers.mine(10) ;
+         
+        await expect(oStake.harvestRewards(poolId))
+        .to.emit(staking, 'HarvestRewards')
+        .withArgs(user1.address,poolId, 11 );
 
-        expect(true).to.equal(true);
+    });
+
+    it("Withdraw tokens", async ()=> {
+        const poolId = 0;
+        const oStake = staking.connect(user1);
+        
+        //mine 10 blocks to generate staking rewards
+        await helpers.mine(10) ;
+
+        await expect(oStake.withdraw(poolId))
+        .to.emit(staking, 'Withdraw')
+        .withArgs(user1.address,poolId, 10 );
 
     })
 

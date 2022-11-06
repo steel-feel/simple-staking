@@ -42,10 +42,10 @@ contract Staking is Ownable{
 
     // Constructor
     constructor(address _rewardTokenAddress, uint256 _rewardTokensPerBlock) {
-        (bool success, ) = _rewardTokenAddress.call(abi.encodeWithSignature("registerStakingContract()"));
-        require(success, "unable to register token");
         rewardToken = IRewardToken(_rewardTokenAddress);
         rewardTokensPerBlock = _rewardTokensPerBlock;
+        (bool success, ) = _rewardTokenAddress.call(abi.encodeWithSignature("registerStakingContract()"));
+        require(success, "unable to register token");
     }
 
     /**
