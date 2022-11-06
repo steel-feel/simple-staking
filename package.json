@@ -4,7 +4,8 @@
   "description": "Project📒 to demonstrate staking💰 of ERC20 based tokens over a period of time.",
   "main": "index.js",
   "scripts": {
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "deploy": "hardhat run scripts/deploy-script.js"
   },
   "repository": {
     "type": "git",
